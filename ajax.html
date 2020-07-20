@@ -1,0 +1,51 @@
+<html>
+  <body>
+    <label>City name:</label>
+    <input type="text" id="city-name-input" />
+    <button id="api-button">Call api</button>
+    <div>
+      <p id="weather-data-text"></p>
+    </div>
+    <button id="submit-data-button">Submit data</button>
+    <div>
+      <strong>Post data:</strong>
+      <br />
+      <p id="post-data-text"></p>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.js"></script>
+  </body>
+</html>
+
+<script>
+  var apiKey = '321649828caffbb27e45462434a80cba';
+  var button = document.getElementById('api-button');
+  var submitButton = document.getElementById('submit-data-button');
+  var weatherDataOutput = document.getElementById("weather-data-text");
+  var weatherData;
+
+  button.addEventListener('click', callWeatherApi);
+  submitButton.addEventListener('click', submitWeatherData);
+
+  async function callWeatherApi () {
+    var cityNameInput = document.getElementById('city-name-input');
+    var cityName = cityNameInput.value;
+    weatherData = await $.ajax({
+      type: "GET",
+      url: 'http://api.openweathermap.org/data/2.5/weather?q=' + cityName + '&appid=' + apiKey
+    });
+    weatherDataOutput.textContent = JSON.stringify(weatherData);
+  }
+
+  async function submitWeatherData () {
+    var response = await $.ajax({
+      type: "POST",
+      url: "http://httpbin.org/post",
+      contentType: "application/JSON",
+      data: weatherData //Using the same weather data that we retrieved from the other API
+    });
+
+    var postDataOutput = document.getElementById('post-data-text');
+
+    postDataOutput.innerHTML = JSON.stringify(response.data);
+  }
+</script>
